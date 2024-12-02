@@ -74,3 +74,62 @@ console.log(err.message);
 }
 
 }
+
+
+exports.login=(req,res)=>{
+
+
+        
+    const {email,password}=req.body;
+
+    if(!email || !password){
+
+        res.status(400).send({status:400,message:"email and password is required"});
+    }
+    else{
+
+
+
+
+schema.find({email:email}).then((result)=>{
+
+
+    bcrypt.compare(password,result[0].password,function(err,auth){
+
+        if(err){
+
+            res.status(404).send({status:404,message:"user not found"});
+        }
+        else
+        {
+
+        if(auth==true){
+
+
+const {id,name ,email,phone}=result[0];
+res.status(200).send({status:200,message:"user login successfully",data:{_id:id ,name:name,email:email,phone:phone}})
+
+
+        }
+        else{
+
+
+            res.status(500).send({status:500,message:"user not found"})
+        }
+
+
+
+      
+
+        }
+    })
+}).catch((err)=>{
+
+            res.status(500).send({status:500,message:"password incorrect"})
+
+})
+    }
+
+
+
+}
