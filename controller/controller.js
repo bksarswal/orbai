@@ -118,9 +118,6 @@ res.status(200).send({status:200,message:"user login successfully",data:{_id:id 
         }
 
 
-
-      
-
         }
     })
 }).catch((err)=>{
@@ -132,4 +129,28 @@ res.status(200).send({status:200,message:"user login successfully",data:{_id:id 
 
 
 
+}
+
+
+exports.updatePhone= (req,res)=>{
+
+    const {id,phone}=req.body;
+
+    schema.updateOne({_id:id},{ $set:{phone:phone}}).then((result)=>{
+
+              console.log(result);
+
+        if(result.matchedCount==1){
+
+res.send({message:"update successfully "})
+        }
+        else{
+
+
+res.send({message:" not update "})
+        }
+    }).catch((err)=>{
+res.status(400).send({status:400,message:"user note update "})
+
+    })
 }
