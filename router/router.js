@@ -7,6 +7,7 @@ router.get('/user-ragistation',controller.ragistation);
 router.post('/user-login',controller.login);
 router.post('/user-update',controller.updatePhone);
 router.post('/user-reset-password',controller.resetPassword);
+router.post('/user-dellet',controller.deletuser);
 
 
 

@@ -242,3 +242,27 @@ if(result.matchedCount==1){
  
 };
 
+
+exports.deletuser= (req,res)=>{
+
+    const {id}=req.body;
+
+    schema.deleteOne({_id:id}).then((result)=>{
+
+        console.log(result)
+
+       if(result.deletedCount==1){
+        res.status(201).send({status:201,message:"user delt successfully"});
+       }
+       else{
+
+        res.status(500).send({status:500,message:"something went wrong"});
+       }
+
+    }).catch((err)=>{
+
+        res.status(500).send({status:500,message:"something went wrong"});
+    })
+}
+
+
