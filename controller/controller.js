@@ -154,3 +154,91 @@ res.status(400).send({status:400,message:"user note update "})
 
     })
 }
+
+
+
+
+
+exports.resetPassword = (req, res) => {
+  const { id, old_pass, new_pass, confirm_pass } = req.body;
+
+  // Validate input
+  if (!id || !old_pass || !new_pass || !confirm_pass) {
+    return res.status(400).send({ status: 400, message: "All fields are required" });
+  }
+
+  if (new_pass !== confirm_pass) {
+    return res.status(401).send({ status: 401, message: "Passwords do not match" });
+  }else{
+
+     // Step 1: Find user by ID
+  schema.findOne({ _id: id }).then((user) => {
+    if (!user) {
+      return res.status(404).send({ status: 404, message: "User not found" });
+    }
+
+    // Step 2: Compare old password
+    bcrypt.compare(old_pass, user.password).then((isMatch) => {
+        if (!isMatch) {
+          return res.status(401).send({ status: 401, message: "Old password is incorrect" });
+        }
+
+        // Step 3: Generate salt and hash new password
+        bcrypt.genSalt(10    ,function(err,salt){
+
+if(err){
+
+  res.status(500).send({status:500,message:"something wbnt wromg"})
+}
+else{
+
+
+  bcrypt.hash(new_pass,salt,function(err,hash){
+
+
+      if(err){
+
+res.status(500).send({status:500,message:"something wbnt wromg"})
+      }
+      else
+      {
+
+schema.updateOne({_id:id},{$set:{password:hash}}).then((result)=>{
+
+if(result.matchedCount==1){
+    res.status(200).send({status:200,message:"passupdate successfully"})
+}else{
+
+    res.send("password not update try again");
+}
+
+ 
+}).catch((err)=>{
+
+  res.status(500).send({status:500,message:"something wbnt wromg"})
+})
+
+      }
+  }
+)
+}
+
+        }) 
+        
+   
+      
+      })
+      .catch((err) => {
+        console.error("Error comparing passwords:", err);
+        res.status(500).send({ status: 500, message: "Server error" });
+      });
+  })
+  .catch((err) => {
+    console.error("Error finding user:", err);
+    res.status(500).send({ status: 500, message: "Something went wrong" });
+  });
+  }
+
+ 
+};
+
