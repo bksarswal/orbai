@@ -23,6 +23,10 @@ type:String,
 required:true,
 
  }
+ ,token:{
+   type:String,
+   default:""
+ }
 
 })
 const user = mongoose.model('dcmbr',schema);
