@@ -1,8 +1,9 @@
   const schema= require("../schema/schema");
   const bcrypt= require('bcrypt');
   const jwt = require("jsonwebtoken");
+   require('dotenv').config();
 
-const privateKey= "privateKey";
+// const privateKey= "privateKey";
 
   exports.ragistation=(req,res)=>{
 
@@ -273,7 +274,7 @@ exports.ganTockenWithLogin=(req,res)=>{
         
     const {email,password}=req.body;
 
-    var token = jwt.sign({email:email},privateKey,{expiresIn:'222s'});
+    var token = jwt.sign({email:email},process.env.PRIVATE_KEY,{expiresIn:'222s'});
 
     if(!email || !password){
 
@@ -340,4 +341,42 @@ schema.updateOne({_id:id},{$set:{token:token}}).then((result)=>{
 
 
 
+}
+
+
+exports.validateToken=(req,res,next)=>{
+
+    const {token}=req.headers;
+
+    jwt.verify(token,process.env.PRIVATEKEY,function(err,auth){
+
+
+        if(err){
+            
+
+                if(err.name=='TokenExpiredError'){
+    
+                    res.send("token has been expired")
+                }
+               
+                else if(err.name=='JsonWebTokenError'){
+                    res.send("in valid toke ");
+                }
+                
+              else{
+    
+                res.status(500).send({status:500,message:'someting went rong'})
+              }
+        }
+        else{
+
+            schema.find({email:auth.email}).then((result)=>{
+
+
+                next()
+            }).catch((err)=>{
+res.status(500).send({status:500,message:"something went wrong"});
+            })
+        }
+    })
 }
